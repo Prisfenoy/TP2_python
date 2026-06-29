@@ -1,0 +1,7 @@
+[project]
+name = "tp2-python"
+version = "0.1.0"
+description = "Este es nuestro segundo trabajo práctico de la materia Programación en Python."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
