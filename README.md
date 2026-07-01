@@ -1,157 +1,215 @@
 # TP2_PYTHON
 
-## Descripción del proyecto
+## Descripción
 
 Este repositorio contiene la resolución del Trabajo Práctico Nº2 de Programación en Python.
 
-El objetivo del trabajo es construir un modelo predictivo que permita estimar la probabilidad de que un bateador realice un swing frente a un determinado lanzamiento de baseball.
+El objetivo del proyecto consiste en desarrollar un modelo de clasificación capaz de predecir la probabilidad de que un bateador realice un **swing** frente a un lanzamiento de béisbol, utilizando información proveniente del sistema Statcast.
 
-Para ello se utilizan datos provenientes de Statcast, donde cada observación representa un lanzamiento realizado durante un partido. A partir de estas observaciones se realiza un análisis exploratorio, se define la variable respuesta y posteriormente se desarrollan modelos para predecir la decisión del bateador.
+El trabajo comprende todas las etapas de un proyecto de aprendizaje automático:
 
----
-
-## Datos utilizados
-
-Los datos utilizados se encuentran dentro de la carpeta `datos/`:
-
-- `temporada1.parquet`: conjunto utilizado para realizar el análisis exploratorio, construir la variable respuesta, entrenar y evaluar los modelos.
-- `temporada2.parquet`: conjunto utilizado para generar las predicciones finales.
-
-Cada registro corresponde a un lanzamiento e incluye información relacionada con:
-
-- características del pitcheo:
-    - velocidad de liberación (`release_speed`)
-    - tipo de lanzamiento (`pitch_type`)
-    - movimiento horizontal y vertical (`pfx_x`, `pfx_z`)
-    - ubicación del lanzamiento (`plate_x`, `plate_z`)
-
-- identificadores del jugador
-    - bateador (`batter`)
-    - pitcher (`pitcher`)
-
-- características del enfrentamiento:
-    - lado del bateador (`stand`)
-    - mano del pitcher (`p_throws`)
-    - cuenta previa al lanzamiento (`balls`, `strikes`)
+- análisis exploratorio de los datos;
+- construcción de la variable respuesta;
+- preprocesamiento de los datos;
+- selección de variables;
+- entrenamiento y comparación de distintos modelos;
+- elección del modelo final y generación de predicciones.
 
 ---
 
-## Estructura del repositorio
+# Estructura del repositorio
+
+```text
 TP2_PYTHON/
 │
 ├── datos/
-│   ├── .gitkeep
+│   ├── temporada1_original.parquet
 │   ├── temporada1.parquet
-│   └── temporada2.parquet
+│   ├── temporada2_original.parquet
+│   ├── temporada2.parquet
+│   ├── train.parquet
+│   ├── test.parquet
+│   └── validacion.parquet
+│
+├── notebooks/
+│   ├── 01_Análisis_descriptivo.ipynb
+│   ├── 02_Construccion_variable_rta.ipynb
+│   ├── 03_Preprocesamiento_de_datos.ipynb
+│   ├── 04_Selección_de_variables.ipynb
+│   ├── 05_Random_forest.ipynb
+│   ├── 06_Modelo_regresion_logistica.ipynb
+│   ├── 07_Comparación_de_modelos.ipynb
+│   └── 08_Modelo_final.ipynb
 │
 ├── .gitignore
 ├── .here
-│
-├── Análisis_descriptivo.ipynb
-├── Construccion_variable_respuesta.ipynb
-│
-└── README.md
-
-
----
-
-## Notebooks
-
-### Construccion_variable_rta.ipynb
-
-En esta notebook se analiza la variable original `description` y se construye la variable respuesta binaria `swing`.
-
-Se define:
-
-- `swing = 1`: cuando existe evidencia de un intento del bateador sobre el lanzamiento.
-- `swing = 0`: cuando no se observa una acción voluntaria del bateador.
-
-La clasificación se realiza utilizando definiciones del dominio de baseball y reglas oficiales de MLB.
+├── .python-version
+├── main.py
+├── pyproject.toml
+├── uv.lock
+├── README.md
+└── NOTAS.md
+```
 
 ---
 
-### Análisis_descriptivo.ipynb
+# Datos
 
-En esta notebook se realiza la exploración inicial del conjunto de datos con el objetivo de comprender las características de los lanzamientos y detectar patrones relevantes para la predicción del swing.
+Los archivos de la carpeta `datos/` corresponden a las distintas etapas del proyecto.
+
+| Archivo | Descripción |
+|----------|-------------|
+| `temporada1_original.parquet` | Conjunto de datos original utilizado para el análisis exploratorio. No presenta modificaciones respecto de la fuente original. |
+| `temporada1.parquet` | Versión procesada de `temporada1_original.parquet`, utilizada para el entrenamiento y evaluación de los modelos. |
+| `temporada2_original.parquet` | Conjunto de datos original sobre el cual se deben realizar las predicciones finales. No presenta modificaciones respecto de la fuente original. |
+| `temporada2.parquet` | Versión procesada de `temporada2_original.parquet`, utilizada para aplicar el modelo final. |
+| `train.parquet` | Subconjunto destinado al entrenamiento de los modelos. |
+| `test.parquet` | Subconjunto reservado para la evaluación del desempeño del modelo seleccionado. |
+| `validacion.parquet` | Archivo de salida que contiene las predicciones finales generadas sobre `temporada2.parquet` para su posterior entrega. |
+
+Cada observación representa un lanzamiento de béisbol e incluye información relacionada con las características del lanzamiento, la ubicación de la pelota, el conteo previo, el bateador, el pitcher y otras variables utilizadas para construir el modelo predictivo.
+
+---
+
+# Notebooks
+
+Las notebooks deben ejecutarse en el siguiente orden.
+
+## 01 - Análisis descriptivo
+
+Se realiza el análisis exploratorio del conjunto de datos mediante estadísticas descriptivas y visualizaciones.
 
 Incluye:
 
-- Análisis univariado de las variables cuantitativas y cualitativas, evaluando sus distribuciones, valores faltantes y cualquier patrón relevante para el problema.
-- Análisis bivariado entre variables de interés, con el fin de identificar relaciones, asociaciones y comportamientos que puedan aportar información al problema predictivo.
-- Identificación de variables potencialmente relevantes y propuesta de transformaciones o nuevas características que puedan incorporarse en los modelos.
+- análisis univariado;
+- análisis bivariado entre las variables explicativas;
+- construcción de variables derivadas.
 
 ---
 
-## Reproducción del análisis
+## 02 - Construcción de la variable respuesta
 
-Para ejecutar las notebooks es necesario instalar previamente las dependencias utilizadas en el proyecto.
+Se construye la variable binaria `swing` a partir de la variable original `description`.
 
-### Windows
+Se define:
 
-1. Crear un ambiente virtual:
-
-```bash
-python -m venv .venv
-````
-
-2. Activar el ambiente virtual:
-
-```bash
-.\.venv\Scripts\activate
-```
-
-3. Instalar las librerías necesarias:
-
-```bash
-python -m pip install 
-```
-
-### Linux
-
-1. Crear un ambiente virtual:
-
-```bash
-python3 -m venv .venv
-```
-
-2. Activar el ambiente virtual:
-
-```bash
-source .venv/bin/activate
-```
-
-3. Instalar las librerías necesarias:
-
-```bash
-python3 -m pip install 
-```
+- `swing = 1`: el bateador intenta golpear el lanzamiento.
+- `swing = 0`: el bateador no realiza un intento de swing.
 
 ---
 
-## Ejecución de las notebooks
+## 03 - Preprocesamiento de datos
 
-Las notebooks deben ejecutarse en el siguiente orden:
+En esta notebook se realizan las tareas de preparación de los datos para el modelado:
 
-1. `Análisis_descriptivo.ipynb`
-
-   Realiza la exploración inicial de los datos y analiza las características relevantes del conjunto.
-
-2. `Construccion_variable_respuesta.ipynb`
-
-   Construye la variable respuesta binaria `swing` a partir de la variable original `description`.
-
-3. `Modelado.ipynb`
-
-   Entrena y evalúa los modelos predictivos utilizando las variables seleccionadas a partir del análisis exploratorio.
+- partición en entrenamiento y prueba (`train` y `test`);
+- tratamiento de valores faltantes;
+- tratamiento de valores atípicos.
 
 ---
 
-## Modelado predictivo
+## 04 - Selección de variables
 
+Se evalúan distintos métodos de selección de variables con el objetivo de obtener un conjunto de predictores que permita construir modelos parsimoniosos sin perder capacidad predictiva.
+
+Entre los métodos considerados se incluyen:
+
+- análisis exploratorio de la relación entre la variable respuesta y las variables explicativas;
+- LASSO.
 
 ---
 
-## Resultados
+## 05 - Random Forest
 
+Se entrena un modelo de Random Forest utilizando los efectos principales seleccionados.
 
+Se evalúa su desempeño mediante distintas métricas, entre ellas log-loss, curvas ROC, accuracy y otras métricas de clasificación. Además, se analiza la importancia de las variables.
 
+---
+
+## 06 - Regresión logística
+
+Se ajusta un modelo de regresión logística utilizando las variables seleccionadas mediante LASSO. En este modelo se incluyen tanto los efectos principales como las interacciones.
+
+Su desempeño se evalúa mediante métricas de clasificación y curvas ROC.
+
+---
+
+## 07 - Comparación de modelos
+
+Se comparan los modelos desarrollados utilizando las siguientes métricas:
+
+- Accuracy;
+- Sensibilidad;
+- Especificidad;
+- Valor Predictivo Positivo (VPP);
+- F1-score;
+- AUC;
+- Log-loss.
+
+A partir de estos resultados se selecciona el modelo definitivo.
+
+---
+
+## 08 - Modelo final
+
+En primer lugar, se realiza la imputación de los valores faltantes en `temporada1.parquet` y `temporada2.parquet`.
+
+Posteriormente, se reentrena el modelo seleccionado utilizando todas las observaciones disponibles en `temporada1.parquet`.
+
+Finalmente, se generan las predicciones correspondientes a `temporada2.parquet`.
+
+---
+
+# Reproducción del proyecto
+
+El proyecto fue desarrollado utilizando **Python** y **uv** para la gestión del entorno y las dependencias.
+
+## Clonar el repositorio
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd TP2_PYTHON
+```
+
+## Crear el entorno e instalar las dependencias
+
+```bash
+uv venv
+uv sync
+```
+
+## Ejecución
+
+Para ejecutar las notebooks, seleccionar el **kernel de Python asociado a `uv`** y ejecutar los archivos en el orden indicado en la siguiente sección.
+
+---
+
+# Reproducción de `validacion.parquet`
+
+Para reproducir el análisis completo y generar el archivo `datos/validacion.parquet`, las notebooks deben ejecutarse en el siguiente orden:
+
+1. `01_Análisis_descriptivo.ipynb`
+2. `02_Construccion_variable_rta.ipynb`
+3. `03_Preprocesamiento_de_datos.ipynb`
+4. `04_Selección_de_variables.ipynb`
+5. `05_Random_forest.ipynb`
+6. `06_Modelo_regresion_logistica.ipynb`
+7. `07_Comparación_de_modelos.ipynb`
+8. `08_Modelo_final.ipynb`
+
+La última notebook realiza la imputación de los conjuntos procesados, reentrena el modelo Random Forest seleccionado utilizando `temporada1.parquet` y genera el archivo `datos/validacion.parquet`, que contiene las predicciones finales correspondientes a `temporada2.parquet`.
+
+---
+
+# Modelo seleccionado
+
+Luego de comparar los distintos modelos desarrollados, se seleccionó **Random Forest** como modelo final por presentar el mejor desempeño sobre el conjunto de prueba.
+
+En particular, obtuvo valores superiores a 0,90 en las principales métricas de clasificación y un **log-loss aproximado de 0,27**, lo que evidencia una buena capacidad predictiva y una adecuada calibración de las probabilidades estimadas.
+
+---
+
+# Documentación adicional
+
+El archivo `NOTAS.md` contiene las fuentes bibliográficas y la documentación técnica consultadas durante el desarrollo del proyecto, incluyendo las referencias utilizadas para comprender las reglas del béisbol y fundamentar la construcción de la variable respuesta.
