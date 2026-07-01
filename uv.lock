@@ -800,6 +800,8 @@ dependencies = [
     { name = "pyprojroot" },
     { name = "scikit-learn" },
     { name = "seaborn" },
+    { name = "statsmodels", version = "0.14.4", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'emscripten'" },
+    { name = "statsmodels", version = "0.14.6", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'emscripten'" },
 ]
 
 [package.metadata]
@@ -813,6 +815,7 @@ requires-dist = [
     { name = "pyprojroot", specifier = ">=0.3.0" },
     { name = "scikit-learn", specifier = ">=1.9.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "statsmodels", specifier = ">=0.14.4" },
 ]
 
 [[package]]
